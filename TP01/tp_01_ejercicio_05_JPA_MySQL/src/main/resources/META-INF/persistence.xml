@@ -1,9 +1,13 @@
-<persistence>
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+             xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+
     <persistence-unit name="Example">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-        <class>edu.isistan.dao.Persona</class>
-        <class>edu.isistan.dao.Direccion</class>
+        <class>dao.Persona</class>
+        <class>dao.Direccion</class>
 
         <properties>
             <!-- Propiedades de configuración de JDBC para MySQL -->
@@ -18,4 +22,5 @@
             <property name="show_sl" value="true" />
         </properties>
     </persistence-unit>
+
 </persistence>
