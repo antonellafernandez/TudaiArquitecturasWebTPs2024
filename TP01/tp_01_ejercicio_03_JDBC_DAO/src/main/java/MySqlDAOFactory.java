@@ -2,8 +2,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class MySqlJDBCDaoFactory extends DAOFactory {
-    public static final String DRIVER = "com.mysql.jdbc.Driver";
+public class MySqlDAOFactory extends DAOFactory {
+    public static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     public static final String DBURL = "jdbc:mysql://localhost:3306/example_db";
 
     public static Connection createConnection() {

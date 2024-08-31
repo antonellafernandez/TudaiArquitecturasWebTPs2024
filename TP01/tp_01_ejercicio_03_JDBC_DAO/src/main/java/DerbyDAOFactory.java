@@ -2,7 +2,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DerbyJDBCDaoFactory extends DAOFactory {
+public class DerbyDAOFactory extends DAOFactory {
     public static final String DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
     public static final String DBURL = "jdbc:derby:MyDerbyDb;create=true";
 

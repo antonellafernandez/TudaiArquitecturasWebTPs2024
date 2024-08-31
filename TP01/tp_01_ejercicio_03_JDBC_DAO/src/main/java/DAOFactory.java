@@ -11,9 +11,9 @@ public abstract class DAOFactory {
     public static DAOFactory getDAOFactory(int whichFactory) {
         switch (whichFactory) {
             case MYSQL_JDBC :
-                return new MySqlJDBCDaoFactory();
+                return new MySqlDAOFactory();
             case DERBY_JDBC:
-                return new DerbyJDBCDaoFactory();
+                return new DerbyDAOFactory();
             default:
                 return null;
         }

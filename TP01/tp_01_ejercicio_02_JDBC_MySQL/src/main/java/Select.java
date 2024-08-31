@@ -3,7 +3,7 @@ import java.sql.*;
 
 public class Select {
     public static void main(String[] args) {
-        String driver = "com.mysql.jdbc.Driver";
+        String driver = "com.mysql.cj.jdbc.Driver";
 
         try {
             Class.forName(driver).getDeclaredConstructor().newInstance();

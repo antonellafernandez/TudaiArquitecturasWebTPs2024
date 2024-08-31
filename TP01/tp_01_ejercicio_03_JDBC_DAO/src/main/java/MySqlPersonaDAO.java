@@ -10,6 +10,31 @@ public class MySqlPersonaDAO implements PersonaDAO {
 
     public MySqlPersonaDAO(Connection conn) {
         this.conn = conn;
+
+        try {
+            createTable();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void createTable() throws SQLException {
+        String drop_table = "DROP TABLE IF EXISTS Persona";
+
+        PreparedStatement ps1 = conn.prepareStatement(drop_table);
+        ps1.executeUpdate();
+        ps1.close();
+
+        String table = "CREATE TABLE IF NOT EXISTS Persona(" +
+                "id INT," +
+                "nombre VARCHAR(500)," +
+                "edad INT," +
+                "PRIMARY KEY(id))";
+
+        PreparedStatement ps2 = conn.prepareStatement(table);
+        ps2.executeUpdate();
+        ps2.close();
     }
 
     @Override
@@ -29,9 +54,11 @@ public class MySqlPersonaDAO implements PersonaDAO {
         String query = "SELECT * FROM Persona";
         PreparedStatement ps = conn.prepareStatement(query);
         ResultSet rs = ps.executeQuery();
+
         while (rs.next()) {
             persons.add(new Persona(rs.getInt("id"), rs.getString("nombre"), rs.getInt("edad")));
         }
+
         rs.close();
         ps.close();
         return persons;

@@ -10,6 +10,25 @@ public class DerbyPersonaDAO implements PersonaDAO {
 
     public DerbyPersonaDAO(Connection conn) {
         this.conn = conn;
+
+        try {
+            createTable();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void createTable() throws SQLException {
+        String table = "CREATE TABLE Persona(" +
+                "id INT," +
+                "nombre VARCHAR(500)," +
+                "edad INT," +
+                "PRIMARY KEY(id))";
+
+        PreparedStatement ps = conn.prepareStatement(table);
+        ps.executeUpdate();
+        ps.close();
     }
 
     @Override
@@ -29,9 +48,11 @@ public class DerbyPersonaDAO implements PersonaDAO {
         String query = "SELECT * FROM Persona";
         PreparedStatement ps = conn.prepareStatement(query);
         ResultSet rs = ps.executeQuery();
+
         while (rs.next()) {
             persons.add(new Persona(rs.getInt("id"), rs.getString("nombre"), rs.getInt("edad")));
         }
+
         rs.close();
         ps.close();
         return persons;
