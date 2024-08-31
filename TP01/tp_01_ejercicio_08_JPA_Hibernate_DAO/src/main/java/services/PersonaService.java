@@ -1,6 +1,8 @@
 package services;
 
 import dao.PersonaDAO;
+import entities.Direccion;
+import entities.Persona;
 import factories.DAOFactory;
 
 import java.sql.SQLException;
@@ -13,11 +15,11 @@ public class PersonaService {
         this.personaDAO = factory.getPersonaDAO();
     }
 
-    public void addPerson(int id, String name, int age) throws SQLException {
-        personaDAO.addPerson(id, name, age);
+    public void addPersona(Persona persona) {
+        personaDAO.addPersona(persona);
     }
 
-    public List<Persona> getAllPersons() throws SQLException {
-        return personaDAO.getAllPersons();
+    public List<Persona> getAllPersonas() {
+        return personaDAO.getAllPersonas();
     }
 }

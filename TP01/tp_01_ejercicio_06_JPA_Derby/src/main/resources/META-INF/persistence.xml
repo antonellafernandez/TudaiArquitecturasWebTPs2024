@@ -10,7 +10,7 @@
         <class>dao.Direccion</class>
 
         <properties>
-            <!-- Propiedades de configuración de JDBC para MySQL -->
+            <!-- Propiedades de configuración de JDBC para Derby -->
             <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver" />
             <property name="javax.persistence.jdbc.url" value="jdbc:derby:MyDerbyDb;create=true" />
 

@@ -1,5 +1,6 @@
 package factories;
 
+import dao.DireccionDAO;
 import dao.PersonaDAO;
 
 // Combinación de AbstractFactory y FactoryMethod
@@ -10,14 +11,15 @@ public abstract class DAOFactory {
     public static final int MYSQL_JDBC = 1;
     public static final int DERBY_JDBC = 2;
 
+    public abstract DireccionDAO getDireccionDAO();
     public abstract PersonaDAO getPersonaDAO();
 
     public static DAOFactory getDAOFactory(int whichFactory) {
         switch (whichFactory) {
             case MYSQL_JDBC :
-                return new MySqlDAOFactory();
+                return new JpaMySqlDAOFactory();
             case DERBY_JDBC:
-                return new DerbyDAOFactory();
+                return new JpaDerbyDAOFactory();
             default:
                 return null;
         }
