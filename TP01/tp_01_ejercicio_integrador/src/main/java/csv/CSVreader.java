@@ -3,7 +3,7 @@ package csv;
 
 import entities.Cliente;
 import entities.Factura;
-import entities.Factura_Producto;
+import entities.FacturaProducto;
 import entities.Producto;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -52,13 +52,13 @@ public class CSVreader {
         return facturas;
     }
 
-    public List<Factura_Producto> leerArchivoFacturasProductos() {
-        List<Factura_Producto> facturas_productos = new ArrayList<>();
+    public List<FacturaProducto> leerArchivoFacturasProductos() {
+        List<FacturaProducto> facturas_productos = new ArrayList<>();
         String csvFile = ".\\src\\main\\java\\csv\\facturas-productos.csv";
 
         try (CSVParser parser = CSVFormat.DEFAULT.withHeader().parse(new FileReader(csvFile))) {
             for (CSVRecord row : parser) {
-                Factura_Producto fp = new Factura_Producto(
+                FacturaProducto fp = new FacturaProducto(
                         Integer.parseInt(row.get("idFactura")),
                         Integer.parseInt(row.get("idProducto")),
                         Integer.parseInt(row.get("cantidad")));

@@ -1,11 +1,11 @@
 package entities;
 
-public class Factura_Producto {
+public class FacturaProducto {
     private int idFactura;
     private int idProducto;
     private int cantidad;
 
-    public Factura_Producto(int idFactura, int idProducto, int cantidad) {
+    public FacturaProducto(int idFactura, int idProducto, int cantidad) {
         this.idFactura = idFactura;
         this.idProducto = idProducto;
         this.cantidad = cantidad;
@@ -29,7 +29,7 @@ public class Factura_Producto {
 
     @Override
     public String toString() {
-        return "Factura_Producto{" +
+        return "FacturaProducto{" +
                 "idFactura=" + idFactura +
                 ", idProducto=" + idProducto +
                 ", cantidad=" + cantidad +
