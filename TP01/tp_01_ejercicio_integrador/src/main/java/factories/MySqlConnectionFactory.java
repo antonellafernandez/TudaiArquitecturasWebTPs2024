@@ -12,7 +12,7 @@ import java.sql.SQLException;
 // Patrón Singleton
 public class MySqlConnectionFactory extends DatabaseFactory {
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String DB_URI = "jdbc:mysql://localhost:3306/mysql_db";
+    private static final String DB_URI = "jdbc:mysql://localhost:3306/mysql_db_integrador";
     private static final String DB_USER = "user";
     private static final String DB_PASSWORD = "password";
 
