@@ -17,7 +17,7 @@ public class MySqlProductoDAO implements ProductoDAO {
     private final Connection conn;
 
     private MySqlProductoDAO() throws SQLException {
-        this.conn = MySqlConnectionFactory.getConnection();
+        this.conn = MySqlConnectionFactory.getInstance().getConnection();
     }
 
     public static MySqlProductoDAO getInstance() throws SQLException {
@@ -26,6 +26,40 @@ public class MySqlProductoDAO implements ProductoDAO {
         }
 
         return unicaInstancia;
+    }
+
+    @Override
+    public void dropTable() throws SQLException {
+        try {
+            String drop_table = "DROP TABLE IF EXISTS Producto";
+
+            PreparedStatement ps = conn.prepareStatement(drop_table);
+            ps.executeUpdate();
+            ps.close();
+
+            this.conn.commit();
+        } catch (SQLException e) {
+            throw new SQLException("Error al eliminar la tabla Producto.", e);
+        }
+    }
+
+    @Override
+    public void createTable() throws SQLException {
+        try {
+            String table = "CREATE TABLE IF NOT EXISTS Producto(" +
+                    "idProducto INT," +
+                    "nombre VARCHAR(45)," +
+                    "valor FLOAT," +
+                    "PRIMARY KEY(idProducto))";
+
+            PreparedStatement ps = conn.prepareStatement(table);
+            ps.executeUpdate();
+            ps.close();
+
+            this.conn.commit();
+        } catch (SQLException e) {
+            throw new SQLException("Error al crear la tabla Producto.", e);
+        }
     }
 
     @Override
@@ -57,8 +91,6 @@ public class MySqlProductoDAO implements ProductoDAO {
             ResultSet rs = ps.executeQuery();
 
             p = new Producto(rs.getInt(1), rs.getString(2), rs.getFloat(3));
-
-            conn.commit();
         } catch (SQLException e) {
             throw new SQLException("Error al seleccionar Producto con id=" + id + "!", e);
         }
@@ -79,8 +111,6 @@ public class MySqlProductoDAO implements ProductoDAO {
             while (rs.next()) {
                 productos.add(new Producto(rs.getInt(1), rs.getString(2), rs.getFloat(3)));
             }
-
-            conn.commit();
         } catch (SQLException e) {
             throw new SQLException("Error al obtener Productos!", e);
         }

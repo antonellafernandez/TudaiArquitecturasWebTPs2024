@@ -1,9 +1,7 @@
 package daos.mysql;
 
 import daos.interfaces.FacturaProductoDAO;
-import entities.Factura;
 import entities.FacturaProducto;
-import entities.Producto;
 import factories.MySqlConnectionFactory;
 
 import java.sql.Connection;
@@ -19,7 +17,7 @@ public class MySqlFacturaProductoDAO implements FacturaProductoDAO {
     private final Connection conn;
 
     private MySqlFacturaProductoDAO() throws SQLException {
-        this.conn = MySqlConnectionFactory.getConnection();
+        this.conn = MySqlConnectionFactory.getInstance().getConnection();
     }
 
     public static MySqlFacturaProductoDAO getInstance() throws SQLException {
@@ -28,6 +26,42 @@ public class MySqlFacturaProductoDAO implements FacturaProductoDAO {
         }
 
         return unicaInstancia;
+    }
+
+    @Override
+    public void dropTable() throws SQLException {
+        try {
+            String drop_table = "DROP TABLE IF EXISTS Factura_Producto";
+
+            PreparedStatement ps = conn.prepareStatement(drop_table);
+            ps.executeUpdate();
+            ps.close();
+
+            this.conn.commit();
+        } catch (SQLException e) {
+            throw new SQLException("Error al eliminar la tabla Factura_Producto.", e);
+        }
+    }
+
+    @Override
+    public void createTable() throws SQLException {
+        try {
+            String table = "CREATE TABLE IF NOT EXISTS Factura_Producto(" +
+                    "idFactura INT," +
+                    "idFactura INT," +
+                    "cantidad INT," +
+                    "PRIMARY KEY(idFactura, idProducto)," +
+                    "FOREIGN KEY(idFactura) REFERENCES Factura(idFactura)," +
+                    "FOREIGN KEY(idProducto) REFERENCES Producto(idProducto))";
+
+            PreparedStatement ps = conn.prepareStatement(table);
+            ps.executeUpdate();
+            ps.close();
+
+            this.conn.commit();
+        } catch (SQLException e) {
+            throw new SQLException("Error al crear la tabla Factura_Producto.", e);
+        }
     }
 
     @Override
@@ -101,8 +135,6 @@ public class MySqlFacturaProductoDAO implements FacturaProductoDAO {
             ResultSet rs = ps.executeQuery();
 
             fp = new FacturaProducto(rs.getInt(1), rs.getInt(2), rs.getInt(3));
-
-            conn.commit();
         } catch (SQLException e) {
             throw new SQLException("Error al seleccionar FacturaProducto!");
         }
@@ -123,8 +155,6 @@ public class MySqlFacturaProductoDAO implements FacturaProductoDAO {
             while (rs.next()) {
                 facturas_productos.add(new FacturaProducto(rs.getInt(1), rs.getInt(2), rs.getInt(3)));
             }
-
-            conn.commit();
         } catch (SQLException e) {
             throw new SQLException("Error al obtener FacturasProductos!", e);
         }

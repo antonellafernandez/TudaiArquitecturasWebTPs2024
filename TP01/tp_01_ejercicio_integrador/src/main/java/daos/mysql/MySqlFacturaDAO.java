@@ -14,7 +14,7 @@ public class MySqlFacturaDAO implements FacturaDAO {
     private final Connection conn;
 
     private MySqlFacturaDAO() throws SQLException {
-        this.conn = MySqlConnectionFactory.getConnection();
+        this.conn = MySqlConnectionFactory.getInstance().getConnection();
     }
 
     public static MySqlFacturaDAO getInstance() throws SQLException {
@@ -23,6 +23,39 @@ public class MySqlFacturaDAO implements FacturaDAO {
         }
 
         return unicaInstancia;
+    }
+
+    @Override
+    public void dropTable() throws SQLException {
+        try {
+            String drop_table = "DROP TABLE IF EXISTS Factura";
+
+            PreparedStatement ps = conn.prepareStatement(drop_table);
+            ps.executeUpdate();
+            ps.close();
+
+            this.conn.commit();
+        } catch (SQLException e) {
+            throw new SQLException("Error al eliminar la tabla Factura.", e);
+        }
+    }
+
+    @Override
+    public void createTable() throws SQLException {
+        try {
+            String table = "CREATE TABLE IF NOT EXISTS Factura(" +
+                    "idFactura INT," +
+                    "idClinte INT," +
+                    "PRIMARY KEY(idFactura))";
+
+            PreparedStatement ps = conn.prepareStatement(table);
+            ps.executeUpdate();
+            ps.close();
+
+            this.conn.commit();
+        } catch (SQLException e) {
+            throw new SQLException("Error al crear la tabla Factura.", e);
+        }
     }
 
     @Override
@@ -53,8 +86,6 @@ public class MySqlFacturaDAO implements FacturaDAO {
             ResultSet rs = ps.executeQuery();
 
             f = new Factura(rs.getInt(1), rs.getInt(2));
-
-            conn.commit();
         } catch (SQLException e) {
             throw new SQLException("Error al seleccionar Cliente con id=" + id + "!", e);
         }
@@ -75,8 +106,6 @@ public class MySqlFacturaDAO implements FacturaDAO {
             while (rs.next()) {
                 facturas.add(new Factura(rs.getInt(1), rs.getInt(2)));
             }
-
-            conn.commit();
         } catch (SQLException e) {
             throw new SQLException("Error al obtener Facturas!", e);
         }

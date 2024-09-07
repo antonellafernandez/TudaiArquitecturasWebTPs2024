@@ -1,4 +1,4 @@
-version: "3"
+version: "8.0"
 services:
   db:
     image: mysql
@@ -8,5 +8,3 @@ services:
       - "MYSQL_ROOT_PASSWORD=password"
     ports:
       - "3306:3306"
-    volumes:
-      - "/Users/adiazpace/Documents/eclipse-workspace/mysql:/var/lib/mysql"
