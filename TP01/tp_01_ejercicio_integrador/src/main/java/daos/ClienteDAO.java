@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Patrón Singleton
-public class ClienteDAO implements DAO<Cliente, Integer> {
+public class ClienteDAO implements DAO<Cliente> {
     private static ClienteDAO unicaInstancia;
     private final Connection conn;
 
@@ -77,13 +77,13 @@ public class ClienteDAO implements DAO<Cliente, Integer> {
     }
 
     @Override
-    public Cliente select (Integer id) throws SQLException {
+    public Cliente select (int id) throws SQLException {
         Cliente c = null;
         String query = "SELECT * FROM Cliente WHERE idCliente=?";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setInt(1, id.intValue());
+            ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
 
             c = new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3));
@@ -133,7 +133,7 @@ public class ClienteDAO implements DAO<Cliente, Integer> {
     }
 
     @Override
-    public boolean delete(Integer id) throws SQLException {
+    public boolean delete(int id) throws SQLException {
         String query = "DELETE FROM Cliente WHERE idCliente = ?";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente

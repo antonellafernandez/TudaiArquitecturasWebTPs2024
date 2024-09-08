@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Patrón Singleton
-public class ProductoDAO implements DAO<Producto, Integer> {
+public class ProductoDAO implements DAO<Producto> {
     private static ProductoDAO unicaInstancia;
     private final Connection conn;
 
@@ -80,13 +80,13 @@ public class ProductoDAO implements DAO<Producto, Integer> {
     }
 
     @Override
-    public Producto select (Integer id) throws SQLException {
+    public Producto select (int id) throws SQLException {
         Producto p = null;
         String query = "SELECT * FROM Producto WHERE idProducto=?";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setInt(1, id.intValue());
+            ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
 
             p = new Producto(rs.getInt(1), rs.getString(2), rs.getFloat(3));
@@ -137,7 +137,7 @@ public class ProductoDAO implements DAO<Producto, Integer> {
     }
 
     @Override
-    public boolean delete(Integer id) throws SQLException {
+    public boolean delete(int id) throws SQLException {
         String query = "DELETE FROM Producto WHERE idProducto = ?";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
