@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Patrón Singleton
-public class FacturaDAO implements DAO<Factura, Integer> {
+public class FacturaDAO implements DAO<Factura> {
     private static FacturaDAO unicaInstancia;
     private final Connection conn;
 
@@ -74,13 +74,13 @@ public class FacturaDAO implements DAO<Factura, Integer> {
     }
 
     @Override
-    public Factura select (Integer id) throws SQLException {
+    public Factura select (int id) throws SQLException {
         Factura f = null;
         String query = "SELECT * FROM Factura WHERE idFactura=?";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setInt(1, id.intValue());
+            ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
 
             f = new Factura(rs.getInt(1), rs.getInt(2));
@@ -115,7 +115,7 @@ public class FacturaDAO implements DAO<Factura, Integer> {
     }
 
     @Override
-    public boolean delete (Integer id) throws SQLException {
+    public boolean delete (int id) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

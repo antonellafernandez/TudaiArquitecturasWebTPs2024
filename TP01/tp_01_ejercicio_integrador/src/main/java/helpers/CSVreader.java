@@ -26,10 +26,10 @@ public class CSVreader {
                         row.get("email"));
                 clientes.add(c);
             }
+            System.out.println("ok");
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return clientes;
     }
 

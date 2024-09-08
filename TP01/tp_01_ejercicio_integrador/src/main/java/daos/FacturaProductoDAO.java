@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Patrón Singleton
-public class FacturaProductoDAO implements DAO<FacturaProducto, Integer> {
+public class FacturaProductoDAO implements DAO<FacturaProducto> {
     private static FacturaProductoDAO unicaInstancia;
     private final Connection conn;
 
@@ -120,7 +120,7 @@ public class FacturaProductoDAO implements DAO<FacturaProducto, Integer> {
     }
 
     @Override
-    public FacturaProducto select (Integer id) throws SQLException {
+    public FacturaProducto select (int id) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -167,7 +167,7 @@ public class FacturaProductoDAO implements DAO<FacturaProducto, Integer> {
     }
 
     @Override
-    public boolean delete(Integer id) throws SQLException {
+    public boolean delete(int id) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

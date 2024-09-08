@@ -6,6 +6,7 @@ import entities.Cliente;
 import entities.Factura;
 import entities.FacturaProducto;
 import entities.Producto;
+import factories.DatabaseFactory;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -20,11 +21,20 @@ public class DatabaseLoader {
         List<FacturaProducto> facturasProductos = reader.leerArchivoFacturasProductos();
 
         // Obtener instancias de los DAOs
+<<<<<<< HEAD
         DAO<ClienteDAO> dao = DAO.getInstance();
         ClienteDAO clienteDAO = ClienteDAO.getInstance();
         FacturaDAO facturaDAO = FacturaDAO.getInstance();
         ProductoDAO productoDAO = ProductoDAO.getInstance();
         FacturaProductoDAO facturaProductoDAO = FacturaProductoDAO.getInstance();
+=======
+
+        DatabaseFactory dBF = DatabaseFactory.getDAOFactory(1);
+        DAO<Cliente> clienteDAO = dBF.getClienteDAO();
+        DAO<Producto> productoDAO = dBF.getProductoDAO();
+        DAO<FacturaProducto> facturaProductoDAO = dBF.getFacturaProductoDAO();
+        DAO<Factura> facturaDAO = dBF.getFacturaDAO();
+>>>>>>> d009bf191fba3fe8508043bc93cee2d04ad52f6c
 
         // Eliminar las tablas si existen y luego recrearlas
         clienteDAO.dropTable();
@@ -48,7 +58,7 @@ public class DatabaseLoader {
     }
 
     // Método genérico para cargar entidades en la base de datos usando cualquier DAO que implemente la interfaz DAO
-    public static <T> void cargarListaEnBaseDeDatos(List<T> lista, DAO<T, ?> dao) throws SQLException {
+    public static <T> void cargarListaEnBaseDeDatos(List<T> lista, DAO<T> dao) throws SQLException {
         for (T entidad : lista) {
             dao.insert(entidad);
         }
