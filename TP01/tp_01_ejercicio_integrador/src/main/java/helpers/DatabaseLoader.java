@@ -20,7 +20,11 @@ public class DatabaseLoader {
         List<FacturaProducto> facturasProductos = reader.leerArchivoFacturasProductos();
 
         // Obtener instancias de los DAOs
-        //COMPLETAR
+        DAO<ClienteDAO> dao = DAO.getInstance();
+        ClienteDAO clienteDAO = ClienteDAO.getInstance();
+        FacturaDAO facturaDAO = FacturaDAO.getInstance();
+        ProductoDAO productoDAO = ProductoDAO.getInstance();
+        FacturaProductoDAO facturaProductoDAO = FacturaProductoDAO.getInstance();
 
         // Eliminar las tablas si existen y luego recrearlas
         clienteDAO.dropTable();
