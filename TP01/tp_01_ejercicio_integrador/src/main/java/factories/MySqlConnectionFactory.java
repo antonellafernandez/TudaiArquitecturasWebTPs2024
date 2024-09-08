@@ -1,9 +1,9 @@
 package factories;
 
-import daos.mysql.ClienteDAO;
-import daos.mysql.FacturaDAO;
-import daos.mysql.FacturaProductoDAO;
-import daos.mysql.ProductoDAO;
+import daos.ClienteDAO;
+import daos.FacturaDAO;
+import daos.FacturaProductoDAO;
+import daos.ProductoDAO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

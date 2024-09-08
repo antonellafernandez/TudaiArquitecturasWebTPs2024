@@ -1,4 +1,4 @@
-package daos.mysql;
+package daos;
 
 import daos.interfaces.DAO;
 import entities.Factura;
@@ -111,11 +111,11 @@ public class FacturaDAO implements DAO<Factura, Integer> {
 
     @Override
     public boolean update (Factura f) {
-        return false;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public boolean delete (Integer id) throws SQLException {
-        return false;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

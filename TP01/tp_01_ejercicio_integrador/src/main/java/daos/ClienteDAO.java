@@ -1,4 +1,4 @@
-package daos.mysql;
+package daos;
 
 import daos.interfaces.DAO;
 import dtos.ClienteConFacturacionDTO;

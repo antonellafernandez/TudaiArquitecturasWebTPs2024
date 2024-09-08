@@ -1,14 +1,9 @@
 import helpers.CSVreader;
-import daos.mysql.ClienteDAO;
-import daos.mysql.FacturaDAO;
-import daos.mysql.ProductoDAO;
-import daos.mysql.FacturaProductoDAO;
+import helpers.DatabaseLoader;
+import daos.ClienteDAO;
+import daos.ProductoDAO;
 import dtos.ClienteConFacturacionDTO;
 import dtos.ProductoMayorRecaudacionDTO;
-import entities.Cliente;
-import entities.Factura;
-import entities.Producto;
-import entities.FacturaProducto;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -18,51 +13,12 @@ public class Main {
         CSVreader reader = new CSVreader();
 
         try {
-            // Obtener las instancias de los DAOs
+            // Cargar todos los datos desde los archivos CSV a la base de datos
+            DatabaseLoader.cargarDatos(reader);
+
+            // Obtener instancias de DAOs para las consultas
             ClienteDAO clienteDAO = ClienteDAO.getInstance();
-            FacturaDAO facturaDAO = FacturaDAO.getInstance();
             ProductoDAO productoDAO = ProductoDAO.getInstance();
-            FacturaProductoDAO facturaProductoDAO = FacturaProductoDAO.getInstance();
-
-            // Eliminar las tablas si existen y luego recrearlas
-            clienteDAO.dropTable();
-            clienteDAO.createTable();
-
-            facturaProductoDAO.dropTable(); // Eliminar primero por FK referenciadas!
-
-            facturaDAO.dropTable();
-            facturaDAO.createTable();
-
-            productoDAO.dropTable();
-            productoDAO.createTable();
-
-            facturaProductoDAO.createTable();
-
-            // Cargar los datos de los archivos CSV
-            List<Cliente> clientes = reader.leerArchivoClientes();
-            List<Factura> facturas = reader.leerArchivoFacturas();
-            List<Producto> productos = reader.leerArchivoProductos();
-            List<FacturaProducto> facturasProductos = reader.leerArchivoFacturasProductos();
-
-            // Insertar los clientes en la base de datos
-            for (Cliente cliente : clientes) {
-                clienteDAO.insert(cliente);
-            }
-
-            // Insertar las facturas en la base de datos
-            for (Factura factura : facturas) {
-                facturaDAO.insert(factura);
-            }
-
-            // Insertar los productos en la base de datos
-            for (Producto producto : productos) {
-                productoDAO.insert(producto);
-            }
-
-            // Insertar las relaciones FacturaProducto en la base de datos
-            for (FacturaProducto fp : facturasProductos) {
-                facturaProductoDAO.insert(fp);
-            }
 
             // Obtiene y muestra el producto con mayor recaudación
             ProductoMayorRecaudacionDTO productoMayorRecaudacion = productoDAO.obtenerProductoMayorRecaudacion();

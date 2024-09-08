@@ -1,5 +1,6 @@
-package daos.mysql;
+package daos;
 
+import daos.interfaces.DAO;
 import entities.Factura;
 import entities.FacturaProducto;
 import factories.MySqlConnectionFactory;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Patrón Singleton
-public class FacturaProductoDAO implements daos.interfaces.FacturaProductoDAO {
+public class FacturaProductoDAO implements DAO<FacturaProducto, Integer> {
     private static FacturaProductoDAO unicaInstancia;
     private final Connection conn;
 
@@ -119,6 +120,10 @@ public class FacturaProductoDAO implements daos.interfaces.FacturaProductoDAO {
     }
 
     @Override
+    public FacturaProducto select (Integer id) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public FacturaProducto select(int idFactura, int idProducto) throws SQLException {
         FacturaProducto fp = null;
         String query = "SELECT * FROM Factura_Producto WHERE idFactura=? AND idProducto=?";
@@ -158,11 +163,11 @@ public class FacturaProductoDAO implements daos.interfaces.FacturaProductoDAO {
 
     @Override
     public boolean update(FacturaProducto fp) throws SQLException {
-        return false;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public boolean delete(int idFactura, int idProducto) throws SQLException {
-        return false;
+    public boolean delete(Integer id) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
