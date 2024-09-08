@@ -5,7 +5,7 @@ import entities.FacturaProducto;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface CrudFacturaProductoDAO {
+public interface FacturaProductoDAO {
     void dropTable() throws SQLException;
 
     void createTable() throws SQLException;

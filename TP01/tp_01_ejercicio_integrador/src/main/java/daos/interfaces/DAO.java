@@ -3,7 +3,7 @@ package daos.interfaces;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface CrudDAO <T, K> {
+public interface DAO<T, K> {
     void dropTable() throws SQLException;
 
     void createTable() throws SQLException;

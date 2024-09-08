@@ -1,6 +1,6 @@
 package daos.mysql;
 
-import daos.interfaces.CrudDAO;
+import daos.interfaces.DAO;
 import dtos.ClienteConFacturacionDTO;
 import entities.Cliente;
 import factories.MySqlConnectionFactory;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Patrón Singleton
-public class ClienteDAO implements CrudDAO<Cliente, Integer> {
+public class ClienteDAO implements DAO<Cliente, Integer> {
     private static ClienteDAO unicaInstancia;
     private final Connection conn;
 

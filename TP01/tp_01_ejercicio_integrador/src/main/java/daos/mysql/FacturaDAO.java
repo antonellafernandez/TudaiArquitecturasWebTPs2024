@@ -1,6 +1,6 @@
 package daos.mysql;
 
-import daos.interfaces.CrudDAO;
+import daos.interfaces.DAO;
 import entities.Factura;
 import factories.MySqlConnectionFactory;
 
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Patrón Singleton
-public class FacturaDAO implements CrudDAO<Factura, Integer> {
+public class FacturaDAO implements DAO<Factura, Integer> {
     private static FacturaDAO unicaInstancia;
     private final Connection conn;
 
