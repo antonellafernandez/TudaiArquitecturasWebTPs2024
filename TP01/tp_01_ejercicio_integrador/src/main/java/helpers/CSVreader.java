@@ -1,4 +1,4 @@
-package csv;
+package helpers;
 
 import entities.Cliente;
 import entities.Factura;
@@ -16,7 +16,7 @@ import java.util.List;
 public class CSVreader {
     public List<Cliente> leerArchivoClientes() {
         List<Cliente> clientes = new ArrayList<>();
-        String csvFile = ".\\src\\main\\java\\csv\\clientes.csv";
+        String csvFile = ".\\src\\main\\resources\\csv_files\\clientes.csv";
 
         try (CSVParser parser = CSVFormat.DEFAULT.withHeader().parse(new FileReader(csvFile))) {
             for (CSVRecord row : parser) {
@@ -35,7 +35,7 @@ public class CSVreader {
 
     public List<Factura> leerArchivoFacturas() {
         List<Factura> facturas = new ArrayList<>();
-        String csvFile = ".\\src\\main\\java\\csv\\facturas.csv";
+        String csvFile = ".\\src\\main\\resources\\csv_files\\facturas.csv";
 
         try (CSVParser parser = CSVFormat.DEFAULT.withHeader().parse(new FileReader(csvFile))) {
             for (CSVRecord row : parser) {
@@ -53,7 +53,7 @@ public class CSVreader {
 
     public List<FacturaProducto> leerArchivoFacturasProductos() {
         List<FacturaProducto> facturas_productos = new ArrayList<>();
-        String csvFile = ".\\src\\main\\java\\csv\\facturas-productos.csv";
+        String csvFile = ".\\src\\main\\resources\\csv_files\\facturas-productos.csv";
 
         try (CSVParser parser = CSVFormat.DEFAULT.withHeader().parse(new FileReader(csvFile))) {
             for (CSVRecord row : parser) {
@@ -72,7 +72,7 @@ public class CSVreader {
 
     public List<Producto> leerArchivoProductos() {
         List<Producto> productos = new ArrayList<>();
-        String csvFile = ".\\src\\main\\java\\csv\\productos.csv";
+        String csvFile = ".\\src\\main\\resources\\csv_files\\productos.csv";
 
         try (CSVParser parser = CSVFormat.DEFAULT.withHeader().parse(new FileReader(csvFile))) {
             for (CSVRecord row : parser) {

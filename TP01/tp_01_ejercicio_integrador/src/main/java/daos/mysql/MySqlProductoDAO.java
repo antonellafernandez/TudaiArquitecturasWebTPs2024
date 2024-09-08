@@ -41,6 +41,7 @@ public class MySqlProductoDAO implements ProductoDAO {
 
             this.conn.commit();
         } catch (SQLException e) {
+            conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al eliminar la tabla Producto.", e);
         }
     }
@@ -60,6 +61,7 @@ public class MySqlProductoDAO implements ProductoDAO {
 
             this.conn.commit();
         } catch (SQLException e) {
+            conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al crear la tabla Producto.", e);
         }
     }
@@ -78,6 +80,7 @@ public class MySqlProductoDAO implements ProductoDAO {
 
             conn.commit();
         } catch (SQLException e) {
+            conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al insertar Producto!", e);
         }
     }

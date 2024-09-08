@@ -39,6 +39,7 @@ public class MySqlFacturaProductoDAO implements FacturaProductoDAO {
 
             this.conn.commit();
         } catch (SQLException e) {
+            conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al eliminar la tabla Factura_Producto.", e);
         }
     }
@@ -60,6 +61,7 @@ public class MySqlFacturaProductoDAO implements FacturaProductoDAO {
 
             this.conn.commit();
         } catch (SQLException e) {
+            conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al crear la tabla Factura_Producto.", e);
         }
     }

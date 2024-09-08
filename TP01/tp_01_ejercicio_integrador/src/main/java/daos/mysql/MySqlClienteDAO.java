@@ -28,52 +28,50 @@ public class MySqlClienteDAO implements ClienteDAO {
 
     @Override
     public void dropTable() throws SQLException {
-        try {
-            String drop_table = "DROP TABLE IF EXISTS Cliente";
+        String drop_table = "DROP TABLE IF EXISTS Cliente";
 
-            PreparedStatement ps = conn.prepareStatement(drop_table);
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        try (PreparedStatement ps = conn.prepareStatement(drop_table)) {
             ps.executeUpdate();
-            ps.close();
-
             this.conn.commit();
         } catch (SQLException e) {
+            conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al eliminar la tabla Cliente.", e);
         }
     }
 
     @Override
     public void createTable() throws SQLException {
-        try {
-            String table = "CREATE TABLE IF NOT EXISTS Cliente(" +
-                    "idCliente INT," +
-                    "nombre VARCHAR(500)," +
-                    "email VARCHAR(150)," +
-                    "PRIMARY KEY(idCliente))";
+        String table = "CREATE TABLE IF NOT EXISTS Cliente(" +
+                "idCliente INT," +
+                "nombre VARCHAR(500)," +
+                "email VARCHAR(150)," +
+                "PRIMARY KEY(idCliente))";
 
-            PreparedStatement ps = conn.prepareStatement(table);
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        try (PreparedStatement ps = conn.prepareStatement(table)) {
             ps.executeUpdate();
-            ps.close();
-
             this.conn.commit();
         } catch (SQLException e) {
+            conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al crear la tabla Cliente.", e);
         }
     }
 
     @Override
     public void insert (Cliente c) throws SQLException {
-        try {
-            String query = "INSERT INTO Cliente(idCliente, nombre, email) VALUES (?, ?, ?)";
+        String query = "INSERT INTO Cliente(idCliente, nombre, email) VALUES (?, ?, ?)";
 
-            PreparedStatement ps = conn.prepareStatement(query);
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, c.getIdCliente());
             ps.setString(2, c.getNombre());
             ps.setString(3, c.getEmail());
-            ps.executeUpdate();
-            ps.close();
 
+            ps.executeUpdate();
             conn.commit();
         } catch (SQLException e) {
+            conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al insertar Cliente!", e);
         }
     }
@@ -81,11 +79,10 @@ public class MySqlClienteDAO implements ClienteDAO {
     @Override
     public Cliente select (Integer id) throws SQLException {
         Cliente c = null;
+        String query = "SELECT * FROM Cliente WHERE idCliente=?";
 
-        try {
-            String query = "SELECT * FROM Cliente WHERE idCliente=?";
-
-            PreparedStatement ps = conn.prepareStatement(query);
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, id.intValue());
             ResultSet rs = ps.executeQuery();
 
@@ -100,13 +97,11 @@ public class MySqlClienteDAO implements ClienteDAO {
     @Override
     public List<Cliente> selectAll () throws SQLException {
         List<Cliente> clientes = new ArrayList<>();
+        String query = "SELECT * FROM Cliente";
 
-        try {
-            String query = "SELECT * FROM Cliente";
-
-            PreparedStatement ps = conn.prepareStatement(query);
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
                 clientes.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3)));
             }

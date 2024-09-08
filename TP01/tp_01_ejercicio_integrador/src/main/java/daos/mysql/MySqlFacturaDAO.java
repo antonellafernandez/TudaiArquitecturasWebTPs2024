@@ -27,15 +27,13 @@ public class MySqlFacturaDAO implements FacturaDAO {
 
     @Override
     public void dropTable() throws SQLException {
-        try {
-            String drop_table = "DROP TABLE IF EXISTS Factura";
+        String drop_table = "DROP TABLE IF EXISTS Factura";
 
-            PreparedStatement ps = conn.prepareStatement(drop_table);
+        try (PreparedStatement ps = conn.prepareStatement(drop_table)) {
             ps.executeUpdate();
-            ps.close();
-
             this.conn.commit();
         } catch (SQLException e) {
+            conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al eliminar la tabla Factura.", e);
         }
     }
@@ -54,6 +52,7 @@ public class MySqlFacturaDAO implements FacturaDAO {
 
             this.conn.commit();
         } catch (SQLException e) {
+            conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al crear la tabla Factura.", e);
         }
     }
@@ -71,6 +70,7 @@ public class MySqlFacturaDAO implements FacturaDAO {
 
             conn.commit();
         } catch (SQLException e) {
+            conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al insertar Factura!", e);
         }
     }
