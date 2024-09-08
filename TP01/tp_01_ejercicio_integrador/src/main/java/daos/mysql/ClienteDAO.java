@@ -1,6 +1,5 @@
 package daos.mysql;
 
-import daos.interfaces.ClienteDAO;
 import dtos.ClienteConFacturacionDTO;
 import entities.Cliente;
 import factories.MySqlConnectionFactory;
@@ -10,17 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Patrón Singleton
-public class MySqlClienteDAO implements ClienteDAO {
-    private static MySqlClienteDAO unicaInstancia;
+public class ClienteDAO implements daos.interfaces.ClienteDAO {
+    private static ClienteDAO unicaInstancia;
     private final Connection conn;
 
-    private MySqlClienteDAO() throws SQLException {
+    private ClienteDAO() throws SQLException {
         this.conn = MySqlConnectionFactory.getInstance().getConnection();
     }
 
-    public static MySqlClienteDAO getInstance() throws SQLException {
+    public static ClienteDAO getInstance() throws SQLException {
         if (unicaInstancia == null) {
-            unicaInstancia = new MySqlClienteDAO();
+            unicaInstancia = new ClienteDAO();
         }
 
         return unicaInstancia;
@@ -33,7 +32,7 @@ public class MySqlClienteDAO implements ClienteDAO {
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
         try (PreparedStatement ps = conn.prepareStatement(drop_table)) {
             ps.executeUpdate();
-            this.conn.commit();
+            conn.commit();
         } catch (SQLException e) {
             conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al eliminar la tabla Cliente.", e);
@@ -51,7 +50,7 @@ public class MySqlClienteDAO implements ClienteDAO {
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
         try (PreparedStatement ps = conn.prepareStatement(table)) {
             ps.executeUpdate();
-            this.conn.commit();
+            conn.commit();
         } catch (SQLException e) {
             conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al crear la tabla Cliente.", e);
@@ -67,8 +66,8 @@ public class MySqlClienteDAO implements ClienteDAO {
             ps.setInt(1, c.getIdCliente());
             ps.setString(2, c.getNombre());
             ps.setString(3, c.getEmail());
-
             ps.executeUpdate();
+
             conn.commit();
         } catch (SQLException e) {
             conn.rollback(); // Rollback en caso de error

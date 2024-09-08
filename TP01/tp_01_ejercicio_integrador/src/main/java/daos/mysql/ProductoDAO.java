@@ -1,7 +1,5 @@
 package daos.mysql;
 
-import daos.interfaces.ProductoDAO;
-import dtos.ClienteConFacturacionDTO;
 import dtos.ProductoMayorRecaudacionDTO;
 import entities.Producto;
 import factories.MySqlConnectionFactory;
@@ -14,17 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Patrón Singleton
-public class MySqlProductoDAO implements ProductoDAO {
-    private static MySqlProductoDAO unicaInstancia;
+public class ProductoDAO implements daos.interfaces.ProductoDAO {
+    private static ProductoDAO unicaInstancia;
     private final Connection conn;
 
-    private MySqlProductoDAO() throws SQLException {
+    private ProductoDAO() throws SQLException {
         this.conn = MySqlConnectionFactory.getInstance().getConnection();
     }
 
-    public static MySqlProductoDAO getInstance() throws SQLException {
+    public static ProductoDAO getInstance() throws SQLException {
         if (unicaInstancia == null) {
-            unicaInstancia = new MySqlProductoDAO();
+            unicaInstancia = new ProductoDAO();
         }
 
         return unicaInstancia;

@@ -1,8 +1,8 @@
 import helpers.CSVreader;
-import daos.mysql.MySqlClienteDAO;
-import daos.mysql.MySqlFacturaDAO;
-import daos.mysql.MySqlProductoDAO;
-import daos.mysql.MySqlFacturaProductoDAO;
+import daos.mysql.ClienteDAO;
+import daos.mysql.FacturaDAO;
+import daos.mysql.ProductoDAO;
+import daos.mysql.FacturaProductoDAO;
 import dtos.ClienteConFacturacionDTO;
 import dtos.ProductoMayorRecaudacionDTO;
 import entities.Cliente;
@@ -19,10 +19,10 @@ public class Main {
 
         try {
             // Obtener las instancias de los DAOs
-            MySqlClienteDAO clienteDAO = MySqlClienteDAO.getInstance();
-            MySqlFacturaDAO facturaDAO = MySqlFacturaDAO.getInstance();
-            MySqlProductoDAO productoDAO = MySqlProductoDAO.getInstance();
-            MySqlFacturaProductoDAO facturaProductoDAO = MySqlFacturaProductoDAO.getInstance();
+            ClienteDAO clienteDAO = ClienteDAO.getInstance();
+            FacturaDAO facturaDAO = FacturaDAO.getInstance();
+            ProductoDAO productoDAO = ProductoDAO.getInstance();
+            FacturaProductoDAO facturaProductoDAO = FacturaProductoDAO.getInstance();
 
             // Eliminar las tablas si existen y luego recrearlas
             clienteDAO.dropTable();

@@ -1,9 +1,9 @@
 package factories;
 
-import daos.mysql.MySqlClienteDAO;
-import daos.mysql.MySqlFacturaDAO;
-import daos.mysql.MySqlFacturaProductoDAO;
-import daos.mysql.MySqlProductoDAO;
+import daos.mysql.ClienteDAO;
+import daos.mysql.FacturaDAO;
+import daos.mysql.FacturaProductoDAO;
+import daos.mysql.ProductoDAO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -62,22 +62,22 @@ public class MySqlConnectionFactory extends DatabaseFactory {
     }
 
     @Override
-    public MySqlClienteDAO getClienteDAO() throws SQLException {
-        return MySqlClienteDAO.getInstance();
+    public ClienteDAO getClienteDAO() throws SQLException {
+        return ClienteDAO.getInstance();
     }
 
     @Override
-    public MySqlFacturaDAO getFacturaDAO() throws SQLException {
-        return MySqlFacturaDAO.getInstance();
+    public FacturaDAO getFacturaDAO() throws SQLException {
+        return FacturaDAO.getInstance();
     }
 
     @Override
-    public MySqlFacturaProductoDAO getFacturaProductoDAO() throws SQLException {
-        return MySqlFacturaProductoDAO.getInstance();
+    public FacturaProductoDAO getFacturaProductoDAO() throws SQLException {
+        return FacturaProductoDAO.getInstance();
     }
 
     @Override
-    public MySqlProductoDAO getProductoDAO() throws SQLException {
-        return MySqlProductoDAO.getInstance();
+    public ProductoDAO getProductoDAO() throws SQLException {
+        return ProductoDAO.getInstance();
     }
 }

@@ -1,6 +1,5 @@
 package daos.mysql;
 
-import daos.interfaces.FacturaDAO;
 import entities.Factura;
 import factories.MySqlConnectionFactory;
 
@@ -9,17 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Patrón Singleton
-public class MySqlFacturaDAO implements FacturaDAO {
-    private static MySqlFacturaDAO unicaInstancia;
+public class FacturaDAO implements daos.interfaces.FacturaDAO {
+    private static FacturaDAO unicaInstancia;
     private final Connection conn;
 
-    private MySqlFacturaDAO() throws SQLException {
+    private FacturaDAO() throws SQLException {
         this.conn = MySqlConnectionFactory.getInstance().getConnection();
     }
 
-    public static MySqlFacturaDAO getInstance() throws SQLException {
+    public static FacturaDAO getInstance() throws SQLException {
         if (unicaInstancia == null) {
-            unicaInstancia = new MySqlFacturaDAO();
+            unicaInstancia = new FacturaDAO();
         }
 
         return unicaInstancia;
@@ -29,9 +28,10 @@ public class MySqlFacturaDAO implements FacturaDAO {
     public void dropTable() throws SQLException {
         String drop_table = "DROP TABLE IF EXISTS Factura";
 
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
         try (PreparedStatement ps = conn.prepareStatement(drop_table)) {
             ps.executeUpdate();
-            this.conn.commit();
+            conn.commit();
         } catch (SQLException e) {
             conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al eliminar la tabla Factura.", e);
@@ -40,17 +40,15 @@ public class MySqlFacturaDAO implements FacturaDAO {
 
     @Override
     public void createTable() throws SQLException {
-        try {
-            String table = "CREATE TABLE IF NOT EXISTS Factura(" +
-                    "idFactura INT," +
-                    "idCliente INT," +
-                    "PRIMARY KEY(idFactura))";
+        String table = "CREATE TABLE IF NOT EXISTS Factura(" +
+                "idFactura INT," +
+                "idCliente INT," +
+                "PRIMARY KEY(idFactura))";
 
-            PreparedStatement ps = conn.prepareStatement(table);
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        try (PreparedStatement ps = conn.prepareStatement(table)) {
             ps.executeUpdate();
-            ps.close();
-
-            this.conn.commit();
+            conn.commit();
         } catch (SQLException e) {
             conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al crear la tabla Factura.", e);
@@ -59,14 +57,13 @@ public class MySqlFacturaDAO implements FacturaDAO {
 
     @Override
     public void insert (Factura f) throws SQLException {
-        try {
-            String query = "INSERT INTO Factura(idFactura, idCliente) VALUES (?, ?)";
+        String query = "INSERT INTO Factura(idFactura, idCliente) VALUES (?, ?)";
 
-            PreparedStatement ps = conn.prepareStatement(query);
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, f.getIdFactura());
             ps.setInt(2, f.getIdCliente());
             ps.executeUpdate();
-            ps.close();
 
             conn.commit();
         } catch (SQLException e) {
@@ -78,11 +75,10 @@ public class MySqlFacturaDAO implements FacturaDAO {
     @Override
     public Factura select (Integer id) throws SQLException {
         Factura f = null;
+        String query = "SELECT * FROM Factura WHERE idFactura=?";
 
-        try {
-            String query = "SELECT * FROM Factura WHERE idFactura=?";
-
-            PreparedStatement ps = conn.prepareStatement(query);
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, id.intValue());
             ResultSet rs = ps.executeQuery();
 
@@ -97,13 +93,11 @@ public class MySqlFacturaDAO implements FacturaDAO {
     @Override
     public List<Factura> selectAll () throws SQLException {
         List<Factura> facturas = new ArrayList<>();
+        String query = "SELECT * FROM Factura";
 
-        try {
-            String query = "SELECT * FROM Factura";
-
-            PreparedStatement ps = conn.prepareStatement(query);
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
                 facturas.add(new Factura(rs.getInt(1), rs.getInt(2)));
             }
