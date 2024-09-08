@@ -48,7 +48,7 @@ public class MySqlFacturaProductoDAO implements FacturaProductoDAO {
         try {
             String table = "CREATE TABLE IF NOT EXISTS Factura_Producto(" +
                     "idFactura INT," +
-                    "idFactura INT," +
+                    "idProducto INT," +
                     "cantidad INT," +
                     "PRIMARY KEY(idFactura, idProducto)," +
                     "FOREIGN KEY(idFactura) REFERENCES Factura(idFactura)," +

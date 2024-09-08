@@ -1,6 +1,7 @@
 package daos.mysql;
 
 import daos.interfaces.ClienteDAO;
+import dtos.ClienteConFacturacionDTO;
 import entities.Cliente;
 import factories.MySqlConnectionFactory;
 
@@ -62,11 +63,12 @@ public class MySqlClienteDAO implements ClienteDAO {
     @Override
     public void insert (Cliente c) throws SQLException {
         try {
-            String query = "INSERT INTO Cliente(nombre, email) VALUES (?,?)";
+            String query = "INSERT INTO Cliente(idCliente, nombre, email) VALUES (?, ?, ?)";
 
             PreparedStatement ps = conn.prepareStatement(query);
-            ps.setString(1, c.getNombre());
-            ps.setString(2, c.getEmail());
+            ps.setInt(1, c.getIdCliente());
+            ps.setString(2, c.getNombre());
+            ps.setString(3, c.getEmail());
             ps.executeUpdate();
             ps.close();
 
@@ -123,5 +125,33 @@ public class MySqlClienteDAO implements ClienteDAO {
     @Override
     public boolean delete (Integer id) throws SQLException {
         return false;
+    }
+
+    public List<ClienteConFacturacionDTO> obtenerClientesPorMayorFacturacionDesc () throws SQLException {
+        List<ClienteConFacturacionDTO> clientesFacturadosDesc = new ArrayList<>();
+
+        String query = "SELECT c.idCliente, c.nombre, c.email, SUM(fp.cantidad) AS cantidad, SUM(p.valor * fp.cantidad) AS totalFacturado "
+                + "FROM Cliente c "
+                + "JOIN Factura f USING (idCliente) "
+                + "JOIN Factura_Producto fp USING (idFactura) "
+                + "JOIN Producto p USING (idProducto) "
+                + "GROUP BY c.idCliente "
+                + "ORDER BY totalFacturado DESC";
+
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        try (PreparedStatement ps = conn.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                clientesFacturadosDesc.add(new ClienteConFacturacionDTO(rs.getInt("idCliente"),
+                        rs.getString("nombre"),
+                        rs.getString("email"),
+                        rs.getFloat("totalFacturado")));
+            }
+        } catch(SQLException e){
+            throw new SQLException("Error al obtener Clientes por facturación desc!", e);
+        }
+
+        return clientesFacturadosDesc;
     }
 }

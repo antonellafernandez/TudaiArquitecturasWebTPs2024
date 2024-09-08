@@ -3,6 +3,8 @@ import daos.mysql.MySqlClienteDAO;
 import daos.mysql.MySqlFacturaDAO;
 import daos.mysql.MySqlProductoDAO;
 import daos.mysql.MySqlFacturaProductoDAO;
+import dtos.ClienteConFacturacionDTO;
+import dtos.ProductoMayorRecaudacionDTO;
 import entities.Cliente;
 import entities.Factura;
 import entities.Producto;
@@ -25,11 +27,15 @@ public class Main {
             // Eliminar las tablas si existen y luego recrearlas
             clienteDAO.dropTable();
             clienteDAO.createTable();
+
+            facturaProductoDAO.dropTable(); // Eliminar primero por FK referenciadas!
+
             facturaDAO.dropTable();
             facturaDAO.createTable();
+
             productoDAO.dropTable();
             productoDAO.createTable();
-            facturaProductoDAO.dropTable();
+
             facturaProductoDAO.createTable();
 
             // Cargar los datos de los archivos CSV
@@ -58,20 +64,28 @@ public class Main {
                 facturaProductoDAO.insert(fp);
             }
 
-            // Seleccionar y mostrar todos los clientes
-            List<Cliente> clientesDB = clienteDAO.selectAll();
-            System.out.println("Clientes:");
-            for (Cliente c : clientesDB) {
-                System.out.println(c.getIdCliente() + " - " + c.getNombre() + " - " + c.getEmail());
+            // Obtiene y muestra el producto con mayor recaudación
+            ProductoMayorRecaudacionDTO productoMayorRecaudacion = productoDAO.obtenerProductoMayorRecaudacion();
+
+            if (productoMayorRecaudacion != null) {
+                System.out.println("Producto con mayor recaudación: ");
+                System.out.println(productoMayorRecaudacion);
+            } else {
+                System.out.println("No se encontraron productos.");
             }
 
-            // Seleccionar y mostrar todas las facturas
-            List<Factura> facturasDB = facturaDAO.selectAll();
-            System.out.println("\nFacturas:");
-            for (Factura f : facturasDB) {
-                System.out.println(f.getIdFactura() + " - Cliente: " + f.getIdCliente());
-            }
+            // Obtiene y muestra la lista de clientes ordenada por facturación
+            List<ClienteConFacturacionDTO> clientesFacturados = clienteDAO.obtenerClientesPorMayorFacturacionDesc();
 
+            if (clientesFacturados.isEmpty()) {
+                System.out.println("\nNo se encontraron clientes.");
+            } else {
+                System.out.println("\nClientes ordenados por mayor facturación: ");
+
+                for (ClienteConFacturacionDTO cliente : clientesFacturados) {
+                    System.out.println(cliente);
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

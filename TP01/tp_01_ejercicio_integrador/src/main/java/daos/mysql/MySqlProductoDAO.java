@@ -1,6 +1,8 @@
 package daos.mysql;
 
 import daos.interfaces.ProductoDAO;
+import dtos.ClienteConFacturacionDTO;
+import dtos.ProductoMayorRecaudacionDTO;
 import entities.Producto;
 import factories.MySqlConnectionFactory;
 
@@ -65,11 +67,12 @@ public class MySqlProductoDAO implements ProductoDAO {
     @Override
     public void insert (Producto p) throws SQLException {
         try {
-            String query = "INSERT INTO Producto(nombre, valor) VALUES (?, ?)";
+            String query = "INSERT INTO Producto(idProducto, nombre, valor) VALUES (?, ?, ?)";
 
             PreparedStatement ps = conn.prepareStatement(query);
-            ps.setString(1, p.getNombre());
-            ps.setFloat(2, p.getValor());
+            ps.setInt(1, p.getIdProducto());
+            ps.setString(2, p.getNombre());
+            ps.setFloat(3, p.getValor());
             ps.executeUpdate();
             ps.close();
 
@@ -126,5 +129,33 @@ public class MySqlProductoDAO implements ProductoDAO {
     @Override
     public boolean delete (Integer id) throws SQLException {
         return false;
+    }
+
+    public ProductoMayorRecaudacionDTO obtenerProductoMayorRecaudacion () throws SQLException {
+        ProductoMayorRecaudacionDTO productoMayorRecaudacion = null;
+
+        String query = "SELECT p.idProducto, p.nombre, p.valor, "
+                + "SUM(fp.cantidad * p.valor) AS recaudacion "
+                + "FROM Producto p "
+                + "JOIN Factura_Producto fp ON p.idProducto = fp.idProducto "
+                + "GROUP BY p.idProducto "
+                + "ORDER BY recaudacion DESC "
+                + "LIMIT 1";
+
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        try (PreparedStatement ps = conn.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                productoMayorRecaudacion = new ProductoMayorRecaudacionDTO(rs.getInt("idProducto"),
+                        rs.getString("nombre"),
+                        rs.getFloat("valor"),
+                        rs.getFloat("recaudacion"));
+            }
+        } catch(SQLException e){
+            throw new SQLException("Error al obtener Producto con mayor recaudación!", e);
+        }
+
+        return productoMayorRecaudacion;
     }
 }

@@ -45,7 +45,7 @@ public class MySqlFacturaDAO implements FacturaDAO {
         try {
             String table = "CREATE TABLE IF NOT EXISTS Factura(" +
                     "idFactura INT," +
-                    "idClinte INT," +
+                    "idCliente INT," +
                     "PRIMARY KEY(idFactura))";
 
             PreparedStatement ps = conn.prepareStatement(table);
@@ -61,10 +61,11 @@ public class MySqlFacturaDAO implements FacturaDAO {
     @Override
     public void insert (Factura f) throws SQLException {
         try {
-            String query = "INSERT INTO Factura(idCliente) VALUES (?)";
+            String query = "INSERT INTO Factura(idFactura, idCliente) VALUES (?, ?)";
 
             PreparedStatement ps = conn.prepareStatement(query);
-            ps.setInt(1, f.getIdCliente());
+            ps.setInt(1, f.getIdFactura());
+            ps.setInt(2, f.getIdCliente());
             ps.executeUpdate();
             ps.close();
 
