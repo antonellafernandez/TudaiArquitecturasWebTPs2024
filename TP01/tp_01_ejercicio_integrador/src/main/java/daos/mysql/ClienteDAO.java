@@ -113,13 +113,41 @@ public class ClienteDAO implements DAO<Cliente, Integer> {
     }
 
     @Override
-    public boolean update () {
-        return false;
+    public boolean update(Cliente c) throws SQLException {
+        String query = "UPDATE Cliente SET nombre = ?, email = ? WHERE idCliente = ?";
+
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, c.getNombre());
+            ps.setString(2, c.getEmail());
+            ps.setInt(3, c.getIdCliente());
+
+            int affectedRows = ps.executeUpdate(); // Devuelve el número de filas afectadas
+
+            conn.commit();
+            return affectedRows > 0; // Retorna true si se actualizó al menos una fila
+        } catch (SQLException e) {
+            conn.rollback(); // Rollback en caso de error
+            throw new SQLException("Error al actualizar Cliente!", e);
+        }
     }
 
     @Override
-    public boolean delete (Integer id) throws SQLException {
-        return false;
+    public boolean delete(Integer id) throws SQLException {
+        String query = "DELETE FROM Cliente WHERE idCliente = ?";
+
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, id);
+
+            int affectedRows = ps.executeUpdate(); // Devuelve el número de filas afectadas
+
+            conn.commit();
+            return affectedRows > 0; // Retorna true si se eliminó al menos una fila
+        } catch (SQLException e) {
+            conn.rollback(); // Rollback en caso de error
+            throw new SQLException("Error al eliminar Cliente con id=" + id, e);
+        }
     }
 
     public List<ClienteConFacturacionDTO> obtenerClientesPorMayorFacturacionDesc () throws SQLException {

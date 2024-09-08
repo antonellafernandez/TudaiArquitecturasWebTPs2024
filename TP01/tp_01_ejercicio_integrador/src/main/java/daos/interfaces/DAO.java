@@ -13,7 +13,7 @@ public interface DAO<T, K> {
     T select(K k) throws SQLException;
     List<T> selectAll() throws SQLException;
 
-    boolean update() throws SQLException;
+    boolean update(T t) throws SQLException;
 
     boolean delete(K k) throws SQLException;
 }

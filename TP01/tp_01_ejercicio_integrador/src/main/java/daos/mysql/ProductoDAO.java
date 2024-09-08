@@ -117,13 +117,41 @@ public class ProductoDAO implements DAO<Producto, Integer> {
     }
 
     @Override
-    public boolean update () {
-        return false;
+    public boolean update(Producto p) throws SQLException {
+        String query = "UPDATE Producto SET nombre = ?, valor = ? WHERE idProducto = ?";
+
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, p.getNombre());
+            ps.setDouble(2, p.getValor());
+            ps.setInt(3, p.getIdProducto());
+
+            int affectedRows = ps.executeUpdate(); // Devuelve el número de filas afectadas
+
+            conn.commit();
+            return affectedRows > 0; // Retorna true si se actualizó al menos una fila
+        } catch (SQLException e) {
+            conn.rollback(); // Rollback en caso de error
+            throw new SQLException("Error al actualizar Producto!", e);
+        }
     }
 
     @Override
-    public boolean delete (Integer id) throws SQLException {
-        return false;
+    public boolean delete(Integer id) throws SQLException {
+        String query = "DELETE FROM Producto WHERE idProducto = ?";
+
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, id);
+
+            int affectedRows = ps.executeUpdate(); // Devuelve el número de filas afectadas
+
+            conn.commit();
+            return affectedRows > 0; // Retorna true si se eliminó al menos una fila
+        } catch (SQLException e) {
+            conn.rollback(); // Rollback en caso de error
+            throw new SQLException("Error al eliminar Producto con id=" + id, e);
+        }
     }
 
     public ProductoMayorRecaudacionDTO obtenerProductoMayorRecaudacion () throws SQLException {

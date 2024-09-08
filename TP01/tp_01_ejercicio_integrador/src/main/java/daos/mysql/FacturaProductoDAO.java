@@ -1,5 +1,6 @@
 package daos.mysql;
 
+import entities.Factura;
 import entities.FacturaProducto;
 import factories.MySqlConnectionFactory;
 
@@ -156,7 +157,7 @@ public class FacturaProductoDAO implements daos.interfaces.FacturaProductoDAO {
     }
 
     @Override
-    public boolean update() throws SQLException {
+    public boolean update(FacturaProducto fp) throws SQLException {
         return false;
     }
 

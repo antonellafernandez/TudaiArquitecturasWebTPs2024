@@ -15,7 +15,7 @@ public interface FacturaProductoDAO {
     FacturaProducto select(int IdFactura, int IdProducto) throws SQLException;
     List<FacturaProducto> selectAll() throws SQLException;
 
-    boolean update() throws SQLException;
+    boolean update(FacturaProducto fp) throws SQLException;
 
     boolean delete(int IdFactura, int IdProducto) throws SQLException;
 }

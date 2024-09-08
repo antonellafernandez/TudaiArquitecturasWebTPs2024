@@ -110,7 +110,7 @@ public class FacturaDAO implements DAO<Factura, Integer> {
     }
 
     @Override
-    public boolean update () {
+    public boolean update (Factura f) {
         return false;
     }
 
