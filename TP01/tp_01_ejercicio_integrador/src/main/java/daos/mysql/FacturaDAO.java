@@ -1,5 +1,6 @@
 package daos.mysql;
 
+import daos.interfaces.CrudDAO;
 import entities.Factura;
 import factories.MySqlConnectionFactory;
 
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Patrón Singleton
-public class FacturaDAO implements daos.interfaces.FacturaDAO {
+public class FacturaDAO implements CrudDAO<Factura, Integer> {
     private static FacturaDAO unicaInstancia;
     private final Connection conn;
 
@@ -28,7 +29,7 @@ public class FacturaDAO implements daos.interfaces.FacturaDAO {
     public void dropTable() throws SQLException {
         String drop_table = "DROP TABLE IF EXISTS Factura";
 
-        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(drop_table)) {
             ps.executeUpdate();
             conn.commit();
@@ -45,7 +46,7 @@ public class FacturaDAO implements daos.interfaces.FacturaDAO {
                 "idCliente INT," +
                 "PRIMARY KEY(idFactura))";
 
-        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(table)) {
             ps.executeUpdate();
             conn.commit();
@@ -59,7 +60,7 @@ public class FacturaDAO implements daos.interfaces.FacturaDAO {
     public void insert (Factura f) throws SQLException {
         String query = "INSERT INTO Factura(idFactura, idCliente) VALUES (?, ?)";
 
-        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, f.getIdFactura());
             ps.setInt(2, f.getIdCliente());
@@ -77,7 +78,7 @@ public class FacturaDAO implements daos.interfaces.FacturaDAO {
         Factura f = null;
         String query = "SELECT * FROM Factura WHERE idFactura=?";
 
-        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, id.intValue());
             ResultSet rs = ps.executeQuery();
@@ -95,7 +96,7 @@ public class FacturaDAO implements daos.interfaces.FacturaDAO {
         List<Factura> facturas = new ArrayList<>();
         String query = "SELECT * FROM Factura";
 
-        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(query)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {

@@ -1,5 +1,6 @@
 package daos.mysql;
 
+import daos.interfaces.CrudDAO;
 import dtos.ProductoMayorRecaudacionDTO;
 import entities.Producto;
 import factories.MySqlConnectionFactory;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Patrón Singleton
-public class ProductoDAO implements daos.interfaces.ProductoDAO {
+public class ProductoDAO implements CrudDAO<Producto, Integer> {
     private static ProductoDAO unicaInstancia;
     private final Connection conn;
 
@@ -30,14 +31,12 @@ public class ProductoDAO implements daos.interfaces.ProductoDAO {
 
     @Override
     public void dropTable() throws SQLException {
-        try {
-            String drop_table = "DROP TABLE IF EXISTS Producto";
+        String drop_table = "DROP TABLE IF EXISTS Producto";
 
-            PreparedStatement ps = conn.prepareStatement(drop_table);
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
+        try (PreparedStatement ps = conn.prepareStatement(drop_table)) {
             ps.executeUpdate();
-            ps.close();
-
-            this.conn.commit();
+            conn.commit();
         } catch (SQLException e) {
             conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al eliminar la tabla Producto.", e);
@@ -46,18 +45,16 @@ public class ProductoDAO implements daos.interfaces.ProductoDAO {
 
     @Override
     public void createTable() throws SQLException {
-        try {
-            String table = "CREATE TABLE IF NOT EXISTS Producto(" +
-                    "idProducto INT," +
-                    "nombre VARCHAR(45)," +
-                    "valor FLOAT," +
-                    "PRIMARY KEY(idProducto))";
+        String table = "CREATE TABLE IF NOT EXISTS Producto(" +
+                "idProducto INT," +
+                "nombre VARCHAR(45)," +
+                "valor FLOAT," +
+                "PRIMARY KEY(idProducto))";
 
-            PreparedStatement ps = conn.prepareStatement(table);
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
+        try (PreparedStatement ps = conn.prepareStatement(table)) {
             ps.executeUpdate();
-            ps.close();
-
-            this.conn.commit();
+            conn.commit();
         } catch (SQLException e) {
             conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al crear la tabla Producto.", e);
@@ -66,15 +63,14 @@ public class ProductoDAO implements daos.interfaces.ProductoDAO {
 
     @Override
     public void insert (Producto p) throws SQLException {
-        try {
-            String query = "INSERT INTO Producto(idProducto, nombre, valor) VALUES (?, ?, ?)";
+        String query = "INSERT INTO Producto(idProducto, nombre, valor) VALUES (?, ?, ?)";
 
-            PreparedStatement ps = conn.prepareStatement(query);
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, p.getIdProducto());
             ps.setString(2, p.getNombre());
             ps.setFloat(3, p.getValor());
             ps.executeUpdate();
-            ps.close();
 
             conn.commit();
         } catch (SQLException e) {
@@ -86,11 +82,10 @@ public class ProductoDAO implements daos.interfaces.ProductoDAO {
     @Override
     public Producto select (Integer id) throws SQLException {
         Producto p = null;
+        String query = "SELECT * FROM Producto WHERE idProducto=?";
 
-        try {
-            String query = "SELECT * FROM Producto WHERE idProducto=?";
-
-            PreparedStatement ps = conn.prepareStatement(query);
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, id.intValue());
             ResultSet rs = ps.executeQuery();
 
@@ -105,11 +100,10 @@ public class ProductoDAO implements daos.interfaces.ProductoDAO {
     @Override
     public List<Producto> selectAll () throws SQLException {
         List<Producto> productos = new ArrayList<>();
+        String query = "SELECT * FROM Producto";
 
-        try {
-            String query = "SELECT * FROM Producto";
-
-            PreparedStatement ps = conn.prepareStatement(query);
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -143,7 +137,7 @@ public class ProductoDAO implements daos.interfaces.ProductoDAO {
                 + "ORDER BY recaudacion DESC "
                 + "LIMIT 1";
 
-        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(query);
              ResultSet rs = ps.executeQuery()) {
 

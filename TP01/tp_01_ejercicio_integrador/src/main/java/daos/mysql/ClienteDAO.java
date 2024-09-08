@@ -1,5 +1,6 @@
 package daos.mysql;
 
+import daos.interfaces.CrudDAO;
 import dtos.ClienteConFacturacionDTO;
 import entities.Cliente;
 import factories.MySqlConnectionFactory;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Patrón Singleton
-public class ClienteDAO implements daos.interfaces.ClienteDAO {
+public class ClienteDAO implements CrudDAO<Cliente, Integer> {
     private static ClienteDAO unicaInstancia;
     private final Connection conn;
 
@@ -29,7 +30,7 @@ public class ClienteDAO implements daos.interfaces.ClienteDAO {
     public void dropTable() throws SQLException {
         String drop_table = "DROP TABLE IF EXISTS Cliente";
 
-        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(drop_table)) {
             ps.executeUpdate();
             conn.commit();
@@ -47,7 +48,7 @@ public class ClienteDAO implements daos.interfaces.ClienteDAO {
                 "email VARCHAR(150)," +
                 "PRIMARY KEY(idCliente))";
 
-        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(table)) {
             ps.executeUpdate();
             conn.commit();
@@ -61,7 +62,7 @@ public class ClienteDAO implements daos.interfaces.ClienteDAO {
     public void insert (Cliente c) throws SQLException {
         String query = "INSERT INTO Cliente(idCliente, nombre, email) VALUES (?, ?, ?)";
 
-        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, c.getIdCliente());
             ps.setString(2, c.getNombre());
@@ -80,7 +81,7 @@ public class ClienteDAO implements daos.interfaces.ClienteDAO {
         Cliente c = null;
         String query = "SELECT * FROM Cliente WHERE idCliente=?";
 
-        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, id.intValue());
             ResultSet rs = ps.executeQuery();
@@ -98,7 +99,7 @@ public class ClienteDAO implements daos.interfaces.ClienteDAO {
         List<Cliente> clientes = new ArrayList<>();
         String query = "SELECT * FROM Cliente";
 
-        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(query)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -132,7 +133,7 @@ public class ClienteDAO implements daos.interfaces.ClienteDAO {
                 + "GROUP BY c.idCliente "
                 + "ORDER BY totalFacturado DESC";
 
-        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente.
+        // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(query);
              ResultSet rs = ps.executeQuery()) {
 

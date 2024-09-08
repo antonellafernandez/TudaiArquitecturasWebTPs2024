@@ -1,12 +1,11 @@
 package daos.interfaces;
 
-import entities.Cliente;
 import entities.FacturaProducto;
 
 import java.sql.SQLException;
 import java.util.List;
 
-public interface FacturaProductoDAO {
+public interface CrudFacturaProductoDAO {
     void dropTable() throws SQLException;
 
     void createTable() throws SQLException;
