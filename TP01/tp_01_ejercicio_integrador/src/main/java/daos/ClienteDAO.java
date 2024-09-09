@@ -12,10 +12,9 @@ import java.util.List;
 // Patrón Singleton
 public class ClienteDAO implements DAO<Cliente> {
     private static ClienteDAO unicaInstancia;
-    private final Connection conn;
 
     private ClienteDAO() throws SQLException {
-        this.conn = MySqlConnectionFactory.getInstance().getConnection();
+
     }
 
     public static ClienteDAO getInstance() throws SQLException {
@@ -28,12 +27,16 @@ public class ClienteDAO implements DAO<Cliente> {
 
     @Override
     public void dropTable() throws SQLException {
+        Connection conn = MySqlConnectionFactory.getInstance().getConnection();
+
         String drop_table = "DROP TABLE IF EXISTS Cliente";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(drop_table)) {
             ps.executeUpdate();
+
             conn.commit();
+            conn.close();
         } catch (SQLException e) {
             conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al eliminar la tabla Cliente.", e);
@@ -42,6 +45,8 @@ public class ClienteDAO implements DAO<Cliente> {
 
     @Override
     public void createTable() throws SQLException {
+        Connection conn = MySqlConnectionFactory.getInstance().getConnection();
+
         String table = "CREATE TABLE IF NOT EXISTS Cliente(" +
                 "idCliente INT," +
                 "nombre VARCHAR(500)," +
@@ -51,7 +56,9 @@ public class ClienteDAO implements DAO<Cliente> {
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(table)) {
             ps.executeUpdate();
+
             conn.commit();
+            conn.close();
         } catch (SQLException e) {
             conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al crear la tabla Cliente.", e);
@@ -60,6 +67,8 @@ public class ClienteDAO implements DAO<Cliente> {
 
     @Override
     public void insert (Cliente c) throws SQLException {
+        Connection conn = MySqlConnectionFactory.getInstance().getConnection();
+
         String query = "INSERT INTO Cliente(idCliente, nombre, email) VALUES (?, ?, ?)";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
@@ -70,6 +79,7 @@ public class ClienteDAO implements DAO<Cliente> {
             ps.executeUpdate();
 
             conn.commit();
+            conn.close();
         } catch (SQLException e) {
             conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al insertar Cliente!", e);
@@ -78,15 +88,18 @@ public class ClienteDAO implements DAO<Cliente> {
 
     @Override
     public Cliente select (int id) throws SQLException {
+        Connection conn = MySqlConnectionFactory.getInstance().getConnection();
+
         Cliente c = null;
         String query = "SELECT * FROM Cliente WHERE idCliente=?";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
+        try (PreparedStatement ps = conn.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
             ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
 
             c = new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3));
+
+            conn.close();
         } catch (SQLException e) {
             throw new SQLException("Error al seleccionar Cliente con id=" + id + "!", e);
         }
@@ -96,15 +109,18 @@ public class ClienteDAO implements DAO<Cliente> {
 
     @Override
     public List<Cliente> selectAll () throws SQLException {
+        Connection conn = MySqlConnectionFactory.getInstance().getConnection();
+
         List<Cliente> clientes = new ArrayList<>();
         String query = "SELECT * FROM Cliente";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
-            ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = conn.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 clientes.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3)));
             }
+
+            conn.close();
         } catch (SQLException e) {
             throw new SQLException("Error al obtener Clientes!", e);
         }
@@ -114,6 +130,8 @@ public class ClienteDAO implements DAO<Cliente> {
 
     @Override
     public boolean update(Cliente c) throws SQLException {
+        Connection conn = MySqlConnectionFactory.getInstance().getConnection();
+
         String query = "UPDATE Cliente SET nombre = ?, email = ? WHERE idCliente = ?";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
@@ -125,6 +143,8 @@ public class ClienteDAO implements DAO<Cliente> {
             int affectedRows = ps.executeUpdate(); // Devuelve el número de filas afectadas
 
             conn.commit();
+            conn.close();
+
             return affectedRows > 0; // Retorna true si se actualizó al menos una fila
         } catch (SQLException e) {
             conn.rollback(); // Rollback en caso de error
@@ -134,6 +154,8 @@ public class ClienteDAO implements DAO<Cliente> {
 
     @Override
     public boolean delete(int id) throws SQLException {
+        Connection conn = MySqlConnectionFactory.getInstance().getConnection();
+
         String query = "DELETE FROM Cliente WHERE idCliente = ?";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
@@ -143,6 +165,8 @@ public class ClienteDAO implements DAO<Cliente> {
             int affectedRows = ps.executeUpdate(); // Devuelve el número de filas afectadas
 
             conn.commit();
+            conn.close();
+
             return affectedRows > 0; // Retorna true si se eliminó al menos una fila
         } catch (SQLException e) {
             conn.rollback(); // Rollback en caso de error
@@ -151,8 +175,9 @@ public class ClienteDAO implements DAO<Cliente> {
     }
 
     public List<ClienteConFacturacionDTO> obtenerClientesPorMayorFacturacionDesc () throws SQLException {
-        List<ClienteConFacturacionDTO> clientesFacturadosDesc = new ArrayList<>();
+        Connection conn = MySqlConnectionFactory.getInstance().getConnection();
 
+        List<ClienteConFacturacionDTO> clientesFacturadosDesc = new ArrayList<>();
         String query = "SELECT c.idCliente, c.nombre, c.email, SUM(fp.cantidad) AS cantidad, SUM(p.valor * fp.cantidad) AS totalFacturado "
                 + "FROM Cliente c "
                 + "JOIN Factura f USING (idCliente) "
@@ -171,6 +196,8 @@ public class ClienteDAO implements DAO<Cliente> {
                         rs.getString("email"),
                         rs.getFloat("totalFacturado")));
             }
+
+            conn.close();
         } catch(SQLException e){
             throw new SQLException("Error al obtener Clientes por facturación desc!", e);
         }

@@ -15,10 +15,9 @@ import java.util.List;
 // Patrón Singleton
 public class ProductoDAO implements DAO<Producto> {
     private static ProductoDAO unicaInstancia;
-    private final Connection conn;
 
     private ProductoDAO() throws SQLException {
-        this.conn = MySqlConnectionFactory.getInstance().getConnection();
+
     }
 
     public static ProductoDAO getInstance() throws SQLException {
@@ -31,12 +30,16 @@ public class ProductoDAO implements DAO<Producto> {
 
     @Override
     public void dropTable() throws SQLException {
+        Connection conn = MySqlConnectionFactory.getInstance().getConnection();
+
         String drop_table = "DROP TABLE IF EXISTS Producto";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(drop_table)) {
             ps.executeUpdate();
+
             conn.commit();
+            conn.close();
         } catch (SQLException e) {
             conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al eliminar la tabla Producto.", e);
@@ -45,6 +48,8 @@ public class ProductoDAO implements DAO<Producto> {
 
     @Override
     public void createTable() throws SQLException {
+        Connection conn = MySqlConnectionFactory.getInstance().getConnection();
+
         String table = "CREATE TABLE IF NOT EXISTS Producto(" +
                 "idProducto INT," +
                 "nombre VARCHAR(45)," +
@@ -54,7 +59,9 @@ public class ProductoDAO implements DAO<Producto> {
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
         try (PreparedStatement ps = conn.prepareStatement(table)) {
             ps.executeUpdate();
+
             conn.commit();
+            conn.close();
         } catch (SQLException e) {
             conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al crear la tabla Producto.", e);
@@ -63,6 +70,8 @@ public class ProductoDAO implements DAO<Producto> {
 
     @Override
     public void insert (Producto p) throws SQLException {
+        Connection conn = MySqlConnectionFactory.getInstance().getConnection();
+
         String query = "INSERT INTO Producto(idProducto, nombre, valor) VALUES (?, ?, ?)";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
@@ -73,6 +82,7 @@ public class ProductoDAO implements DAO<Producto> {
             ps.executeUpdate();
 
             conn.commit();
+            conn.close();
         } catch (SQLException e) {
             conn.rollback(); // Rollback en caso de error
             throw new SQLException("Error al insertar Producto!", e);
@@ -81,15 +91,18 @@ public class ProductoDAO implements DAO<Producto> {
 
     @Override
     public Producto select (int id) throws SQLException {
+        Connection conn = MySqlConnectionFactory.getInstance().getConnection();
+
         Producto p = null;
         String query = "SELECT * FROM Producto WHERE idProducto=?";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
+        try (PreparedStatement ps = conn.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
             ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
 
             p = new Producto(rs.getInt(1), rs.getString(2), rs.getFloat(3));
+
+            conn.close();
         } catch (SQLException e) {
             throw new SQLException("Error al seleccionar Producto con id=" + id + "!", e);
         }
@@ -99,16 +112,18 @@ public class ProductoDAO implements DAO<Producto> {
 
     @Override
     public List<Producto> selectAll () throws SQLException {
+        Connection conn = MySqlConnectionFactory.getInstance().getConnection();
+
         List<Producto> productos = new ArrayList<>();
         String query = "SELECT * FROM Producto";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
-            ResultSet rs = ps.executeQuery();
-
+        try (PreparedStatement ps = conn.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 productos.add(new Producto(rs.getInt(1), rs.getString(2), rs.getFloat(3)));
             }
+
+            conn.close();
         } catch (SQLException e) {
             throw new SQLException("Error al obtener Productos!", e);
         }
@@ -118,6 +133,8 @@ public class ProductoDAO implements DAO<Producto> {
 
     @Override
     public boolean update(Producto p) throws SQLException {
+        Connection conn = MySqlConnectionFactory.getInstance().getConnection();
+
         String query = "UPDATE Producto SET nombre = ?, valor = ? WHERE idProducto = ?";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
@@ -129,6 +146,8 @@ public class ProductoDAO implements DAO<Producto> {
             int affectedRows = ps.executeUpdate(); // Devuelve el número de filas afectadas
 
             conn.commit();
+            conn.close();
+
             return affectedRows > 0; // Retorna true si se actualizó al menos una fila
         } catch (SQLException e) {
             conn.rollback(); // Rollback en caso de error
@@ -138,6 +157,8 @@ public class ProductoDAO implements DAO<Producto> {
 
     @Override
     public boolean delete(int id) throws SQLException {
+        Connection conn = MySqlConnectionFactory.getInstance().getConnection();
+
         String query = "DELETE FROM Producto WHERE idProducto = ?";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
@@ -147,6 +168,8 @@ public class ProductoDAO implements DAO<Producto> {
             int affectedRows = ps.executeUpdate(); // Devuelve el número de filas afectadas
 
             conn.commit();
+            conn.close();
+
             return affectedRows > 0; // Retorna true si se eliminó al menos una fila
         } catch (SQLException e) {
             conn.rollback(); // Rollback en caso de error
@@ -155,8 +178,9 @@ public class ProductoDAO implements DAO<Producto> {
     }
 
     public ProductoMayorRecaudacionDTO obtenerProductoMayorRecaudacion () throws SQLException {
-        ProductoMayorRecaudacionDTO productoMayorRecaudacion = null;
+        Connection conn = MySqlConnectionFactory.getInstance().getConnection();
 
+        ProductoMayorRecaudacionDTO productoMayorRecaudacion = null;
         String query = "SELECT p.idProducto, p.nombre, p.valor, "
                 + "SUM(fp.cantidad * p.valor) AS recaudacion "
                 + "FROM Producto p "
@@ -166,8 +190,7 @@ public class ProductoDAO implements DAO<Producto> {
                 + "LIMIT 1";
 
         // try-with-resources asegura que PreparedStatement y ResultSet se cierren automáticamente
-        try (PreparedStatement ps = conn.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = conn.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
 
             if (rs.next()) {
                 productoMayorRecaudacion = new ProductoMayorRecaudacionDTO(rs.getInt("idProducto"),
@@ -175,6 +198,8 @@ public class ProductoDAO implements DAO<Producto> {
                         rs.getFloat("valor"),
                         rs.getFloat("recaudacion"));
             }
+
+            conn.close();
         } catch(SQLException e){
             throw new SQLException("Error al obtener Producto con mayor recaudación!", e);
         }
