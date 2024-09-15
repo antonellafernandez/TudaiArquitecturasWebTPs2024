@@ -1,6 +1,8 @@
 package entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Direccion {
@@ -14,11 +16,19 @@ public class Direccion {
     @Column
     private String calle;
 
+    // Una direccion puede ir a muchas personas
+    @OneToMany(mappedBy="domicilio", fetch=FetchType.LAZY)
+    // LAZY por defecto, no se hace fetch hasta no pedir algo
+    // de la lista a la base de datos, porque es muy costoso
+    private List<Persona> habitantes;
+
     public Direccion() {
         super();
+        this.habitantes = new ArrayList<Persona>();
     }
 
     public Direccion(String ciudad, String calle) {
+        super();
         this.ciudad = ciudad;
         this.calle = calle;
     }
