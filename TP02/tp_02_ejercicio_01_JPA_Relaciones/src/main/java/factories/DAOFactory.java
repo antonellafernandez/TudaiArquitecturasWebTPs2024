@@ -15,7 +15,7 @@ public abstract class DAOFactory {
 
     public static DAOFactory getDAOFactory(int whichFactory) {
         switch (whichFactory) {
-            case MYSQL_JDBC :
+            case MYSQL_JDBC:
                 return new JpaMySqlDAOFactory();
             case DERBY_JDBC:
                 return new JpaDerbyDAOFactory();
